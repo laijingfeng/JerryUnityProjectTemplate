@@ -1,10 +1,11 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
 public class BuildTools : Editor
 {
-    [MenuItem("Tools/导出APK", false, 1)]
+    [MenuItem("Tools/导出APK", false, 0)]
     static public void ExportAndroidApk()
     {
         DoSettings();
@@ -29,17 +30,40 @@ public class BuildTools : Editor
     private static void DoSettings()
     {
         //PlayerSettings.productName = "UnityProject";
+        PlayerSettings.companyName = "Jerry";
         PlayerSettings.bundleIdentifier = string.Format("com.jerry.lai.{0}", PlayerSettings.productName);
-        PlayerSettings.keystorePass = "jerrylai@jingfeng*1990";
-        PlayerSettings.keyaliasPass = "lai123";
+        PlayerSettings.Android.keystoreName = "./jerry.keystore";
+        PlayerSettings.Android.keystorePass = "jerrylai@jingfeng*1990";
+        PlayerSettings.Android.keyaliasName = "jerrylai";
+        PlayerSettings.Android.keyaliasPass = "lai123";
+    }
+
+    private static string[] GetLevels()
+    {
+        if(EditorBuildSettings.scenes == null || EditorBuildSettings.scenes.Length <= 0)
+        {
+            return null;
+        }
+        List<string> ret = new List<string>();
+        foreach (EditorBuildSettingsScene s in EditorBuildSettings.scenes)
+        {
+            if (s.enabled == true)
+            {
+                ret.Add(s.path);
+            }
+        }
+        return ret.ToArray();
     }
 
     private static void DoBuild(string path, BuildOptions opt)
     {
-        BuildPipeline.BuildPlayer(new string[] 
+        string[] levels = GetLevels();
+        if (levels == null || levels.Length <= 0)
         {
-            "Assets/Main.unity",
-        },
+            Debug.LogWarning("打包的场景列表为空，请在BuildSettings的ScenesInBuild设置要打包的场景");
+            return;
+        }
+        BuildPipeline.BuildPlayer(levels,
         path,
         BuildTarget.Android,
         opt);
