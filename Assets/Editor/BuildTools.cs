@@ -27,7 +27,13 @@ public class BuildTools : Editor
         DoBuild(exportPath, BuildTarget.Android, BuildOptions.AcceptExternalModificationsToPlayer);
     }
 
-    [MenuItem("Tools/导出WebGL", false, 2)]
+    [MenuItem("Tools/仅仅做Android设置", false, 2)]
+    static public void JustDoSettings()
+    {
+        DoSettings();
+    }
+
+    [MenuItem("Tools/导出WebGL", false, 3)]
     static public void ExportWebGL()
     {
         string exportPath = Application.dataPath + "/../WebGL";
