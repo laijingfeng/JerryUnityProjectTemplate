@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class BuildTools : Editor
 {
+#if UNITY_ANDROID
     [MenuItem("Tools/导出APK", false, 0)]
     static public void ExportAndroidApk()
     {
@@ -32,7 +33,9 @@ public class BuildTools : Editor
     {
         DoSettings();
     }
+#endif
 
+#if UNITY_WEBGL
     [MenuItem("Tools/导出WebGL", false, 3)]
     static public void ExportWebGL()
     {
@@ -44,6 +47,7 @@ public class BuildTools : Editor
         Directory.CreateDirectory(exportPath);
         DoBuild(exportPath, BuildTarget.WebGL, BuildOptions.Il2CPP);
     }
+#endif
 
     private static void DoSettings()
     {
