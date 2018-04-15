@@ -10,8 +10,9 @@ public class BuildTools : Editor
     static public void ExportAndroidApk()
     {
         DoSettings();
-        string exportPath = string.Format("{0}/../{1}_{2}.apk",
-            Application.dataPath, PlayerSettings.productName, System.DateTime.Now.ToString("HHmmss"));
+		//Unity5.6.1里用到/../这种路径的时候，会被判定为到处到Assets目录了，所以不要出现这种写法
+        string exportPath = string.Format("{0}/{1}_{2}.apk",
+            Application.dataPath.Replace("/Assets", ""), PlayerSettings.productName, System.DateTime.Now.ToString("HHmmss"));
         DoBuild(exportPath, BuildTarget.Android, BuildOptions.None);
     }
 
