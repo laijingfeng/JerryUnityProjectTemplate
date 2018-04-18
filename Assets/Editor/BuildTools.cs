@@ -3,6 +3,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
+//Unity5.6.1里用到/../这种路径的时候，会被判定为到处到Assets目录了，所以不要出现这种写法
 public class BuildTools : Editor
 {
 #if UNITY_ANDROID
@@ -10,8 +11,7 @@ public class BuildTools : Editor
     static public void ExportAndroidApk()
     {
         DoSettings();
-		//Unity5.6.1里用到/../这种路径的时候，会被判定为到处到Assets目录了，所以不要出现这种写法
-        string exportPath = string.Format("{0}/{1}_{2}.apk",
+		string exportPath = string.Format("{0}/{1}_{2}.apk",
             Application.dataPath.Replace("/Assets", ""), PlayerSettings.productName, System.DateTime.Now.ToString("HHmmss"));
         DoBuild(exportPath, BuildTarget.Android, BuildOptions.None);
     }
@@ -20,7 +20,7 @@ public class BuildTools : Editor
     static public void ExportAndroidProject()
     {
         DoSettings();
-        string exportPath = Application.dataPath + "/../ExportAndroid";
+        string exportPath = Application.dataPath.Replace("/Assets", "") + "/ExportAndroid";
         if (Directory.Exists(exportPath))
         {
             Directory.Delete(exportPath, true);
@@ -40,7 +40,7 @@ public class BuildTools : Editor
     [MenuItem("Tools/导出WebGL", false, 3)]
     static public void ExportWebGL()
     {
-        string exportPath = Application.dataPath + "/../WebGL";
+        string exportPath = Application.dataPath.Replace("/Assets", "") + "/WebGL";
         if (Directory.Exists(exportPath))
         {
             Directory.Delete(exportPath, true);
