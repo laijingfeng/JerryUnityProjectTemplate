@@ -50,6 +50,20 @@ public class BuildTools : Editor
     }
 #endif
 
+#if UNITY_IOS
+    [MenuItem("Tools/导出iOS", false, 4)]
+    static public void ExportWebGL()
+    {
+        string exportPath = Application.dataPath.Replace("/Assets", "") + "/iOS" + System.DateTime.Now.ToString("yyyMMdd_HHmmss");
+        if (Directory.Exists(exportPath))
+        {
+            Directory.Delete(exportPath, true);
+        }
+        Directory.CreateDirectory(exportPath);
+        DoBuild(exportPath, BuildTarget.iOS, BuildOptions.Il2CPP);
+    }
+#endif
+
     private static void DoSettings()
     {
         //PlayerSettings.productName = "UnityProject";
