@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using XLua;
 
 public class XLuaMgr : MonoBehaviour
@@ -34,7 +32,8 @@ public class XLuaMgr : MonoBehaviour
         {
             if (luaEnv != null)
             {
-                luaEnv.DoString("require('Main')");
+                luaEnv.DoString("require('test')");//包含某个文件
+                //luaEnv.DoString("require('Main')");//包含某个文件
             }
         }
         catch (System.Exception ex)
@@ -47,9 +46,7 @@ public class XLuaMgr : MonoBehaviour
     public static byte[] CustomLoader(ref string filepath)
     {
         Debug.Log("Load xLua script : " + filepath);
-        // TODO：此处从项目资源管理器加载lua脚本
-        TextAsset textAsset = (TextAsset)Resources.Load("xlua/" + filepath.Replace(".", "/") + ".lua");
-        //TextAsset textAsset = (TextAsset)ResourceMgr.instance.SyncLoad(ResourceMgr.RESTYPE.XLUA_SCRIPT, filepath).resObject;
+        TextAsset textAsset = (TextAsset)Resources.Load(filepath.Replace(".", "/") + ".lua");
         if (textAsset != null)
         {
             return textAsset.bytes;
