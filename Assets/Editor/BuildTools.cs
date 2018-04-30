@@ -7,16 +7,42 @@ using UnityEngine;
 public class BuildTools : Editor
 {
 #if UNITY_ANDROID
-    [MenuItem("Tools/导出APK", false, 0)]
-    static public void ExportAndroidApk()
+    [MenuItem("Tools/导出APK(Mono2x)", false, 0)]
+    static public void ExportAndroidApk_Mono()
     {
         DoSettings();
-		string exportPath = string.Format("{0}/{1}_{2}.apk",
-            Application.dataPath.Replace("/Assets", ""), PlayerSettings.productName, System.DateTime.Now.ToString("HHmmss"));
+
+        PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.Mono2x);
+        string exportPath = string.Format("{0}/{1}_Mono2x_{2}({3})_{4}_{5}.apk",
+            Application.dataPath.Replace("/Assets", ""),
+            PlayerSettings.productName,
+            PlayerSettings.bundleVersion,
+            PlayerSettings.Android.bundleVersionCode,
+            System.DateTime.Now.ToString("yyyyMMdd_HHmmss"),
+            PlayerSettings.GetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android));
+
         DoBuild(exportPath, BuildTarget.Android, BuildOptions.None);
     }
 
-    [MenuItem("Tools/导出Android工程", false, 1)]
+    [MenuItem("Tools/导出APK(IL2CPP)", false, 0)]
+    static public void ExportAndroidApk_IL2CPP()
+    {
+        DoSettings();
+
+        //IL2CPP单设置打包参数是不行的，必须更改配置
+        PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
+        string exportPath = string.Format("{0}/{1}_IL2CPP_{2}({3})_{4}_{5}.apk",
+            Application.dataPath.Replace("/Assets", ""),
+            PlayerSettings.productName,
+            PlayerSettings.bundleVersion,
+            PlayerSettings.Android.bundleVersionCode,
+            System.DateTime.Now.ToString("yyyyMMdd_HHmmss"),
+            PlayerSettings.GetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android));
+
+        DoBuild(exportPath, BuildTarget.Android, BuildOptions.None);
+    }
+
+    [MenuItem("Tools/导出Android工程", false, 2)]
     static public void ExportAndroidProject()
     {
         DoSettings();
@@ -29,7 +55,7 @@ public class BuildTools : Editor
         DoBuild(exportPath, BuildTarget.Android, BuildOptions.AcceptExternalModificationsToPlayer);
     }
 
-    [MenuItem("Tools/仅仅做Android设置", false, 2)]
+    [MenuItem("Tools/仅仅做Android设置", false, 3)]
     static public void JustDoSettings()
     {
         DoSettings();
@@ -37,7 +63,7 @@ public class BuildTools : Editor
 #endif
 
 #if UNITY_WEBGL
-    [MenuItem("Tools/导出WebGL", false, 3)]
+    [MenuItem("Tools/导出WebGL", false, 0)]
     static public void ExportWebGL()
     {
         string exportPath = Application.dataPath.Replace("/Assets", "") + "/WebGL";
@@ -51,7 +77,7 @@ public class BuildTools : Editor
 #endif
 
 #if UNITY_IOS
-    [MenuItem("Tools/导出iOS", false, 4)]
+    [MenuItem("Tools/导出iOS", false, 0)]
     static public void ExportWebGL()
     {
         string exportPath = Application.dataPath.Replace("/Assets", "") + "/iOS" + System.DateTime.Now.ToString("yyyMMdd_HHmmss");
