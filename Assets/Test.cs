@@ -5,11 +5,16 @@ public class Test : MonoBehaviour
 {
     void Start()
     {
-        Log("hahaha");
+        Haha();
     }
 
     void Update()
     {
+    }
+
+    public void Haha()
+    {
+        UnityEngine.Debug.LogWarning("haha unity");
     }
 
     [Conditional("DEBUG_VER")]

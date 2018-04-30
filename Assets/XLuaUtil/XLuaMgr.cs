@@ -66,7 +66,7 @@ public class XLuaMgr : MonoBehaviour
             }
         }
     }
-
+    
     void OnDestroy()
     {
         if (luaEnv != null)
