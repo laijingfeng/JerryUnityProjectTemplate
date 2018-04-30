@@ -2,9 +2,22 @@
 using System;
 using UnityEngine;
 using XLua;
+using System.Reflection;
+using System.Linq;
 
 public static class HotfixCfg
 {
+    [Hotfix]
+    public static List<Type> by_property
+    {
+        get
+        {
+            return (from type in Assembly.Load("Assembly-CSharp").GetTypes()
+                    where type.Namespace == "XXXX"
+                    select type).ToList();
+        }
+    }
+
     /// <summary>
     /// lua中要使用到C#库的配置，比如C#标准库，或者Unity API，第三方库等。
     /// </summary>
