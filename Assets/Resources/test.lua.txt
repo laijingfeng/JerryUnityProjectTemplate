@@ -1,3 +1,0 @@
-xlua.hotfix(CS.Test, 'Haha', function(self)
-	CS.UnityEngine.Debug.Log('Haha lua')
-end)
