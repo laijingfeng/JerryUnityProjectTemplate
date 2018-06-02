@@ -3,6 +3,8 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
+//Version: 2018-06-02-00
+
 //Unity5.6.1里用到/../这种路径的时候，会被判定为到处到Assets目录了，所以不要出现这种写法
 public class BuildTools : Editor
 {
