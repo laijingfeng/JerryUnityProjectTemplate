@@ -527,7 +527,7 @@ PlayerSettings:
     17: MOBILE_INPUT
     20: MOBILE_INPUT
   platformArchitecture:
-    iOS: 0
+    iOS: 2
     tvOS: 1
   scriptingBackend:
     Android: 0
