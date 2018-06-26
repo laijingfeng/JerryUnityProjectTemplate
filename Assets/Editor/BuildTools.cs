@@ -86,14 +86,34 @@ public class BuildTools : Editor
     [MenuItem("Tools/导出iOS", false, 0)]
     static public void ExportWebGL()
     {
-        string exportPath = Application.dataPath.Replace("/Assets", "") + "/iOS" + System.DateTime.Now.ToString("yyyMMdd_HHmmss");
+        string dirName = "iOS" + System.DateTime.Now.ToString("yyyMMdd_HHmmss");
+        string exportPath = Application.dataPath.Replace("/Assets", "") + "/" + dirName;
         if (Directory.Exists(exportPath))
         {
             Directory.Delete(exportPath, true);
         }
         Directory.CreateDirectory(exportPath);
         DoBuild(exportPath, BuildTarget.iOS, BuildOptions.Il2CPP);
+        ModifyIOS(dirName);
     }
+
+    static private void ModifyIOS(string dirName)
+    {
+        string curDir = Directory.GetCurrentDirectory();
+        string toolsPath = curDir + "/iOSRes/";
+        try
+        {
+            Directory.SetCurrentDirectory(toolsPath);
+            UnityCallProcess.CallProcess("python.exe", string.Format("{0} {1}", toolsPath + "modify_ios.py", "project_name-" + dirName), false);
+            Directory.SetCurrentDirectory(curDir);
+        }
+        catch (System.Exception ex)
+        {
+            UnityEngine.Debug.LogError(ex);
+            Directory.SetCurrentDirectory(curDir);
+        }
+    }
+
 #endif
 
     private static void DoSettings()
