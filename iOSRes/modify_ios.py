@@ -138,14 +138,17 @@ class MainClass(object):
         self.logger.info('project_name is ：' + self.argv["project_name"])
 
         self.app_icon_path = self.get_exe_path('./../' + self.argv["project_name"] + '/Unity-iPhone/Images.xcassets/AppIcon.appiconset/')
-        json_file = os.path.join(self.app_icon_path ,'./Contents.json')
+        json_file = os.path.join(self.app_icon_path, './Contents.json')
         
         if os.path.exists(json_file) is False:
             self.logger.info('project not exist')
             exit(0)
         
-        image_file = os.path.join(self.app_icon_path ,'./Icon-AppStore.png')
+        image_file = os.path.join(self.app_icon_path, './Icon-AppStore.png')
         shutil.copy(self.get_exe_path('./Icon-AppStore.png'), image_file)
+
+        py_file = self.get_exe_path('./../' + self.argv["project_name"] + '/chmod.py')
+        shutil.copy('./chmod.py', py_file)
 
         with codecs.open(json_file, 'r', 'utf-8') as file_handle:
             self.config = json.load(file_handle)
