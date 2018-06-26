@@ -140,7 +140,7 @@ PlayerSettings:
     Android: com.jerry.lai.UnityProjectTemplate
     Standalone: unity.Jerry.UnityProjectTemplate
     Tizen: com.jerry.lai.UnityProjectTemplate
-    iOS: com.jerry.lai.UnityProjectTemplate
+    iOS: com.onemoregame.test
     tvOS: com.jerry.lai.UnityProjectTemplate
   buildNumber:
     iOS: 0
@@ -233,7 +233,7 @@ PlayerSettings:
   - m_BuildTarget: 
     m_Icons:
     - serializedVersion: 2
-      m_Icon: {fileID: 2800000, guid: 865a0421ac354264ea00bdf8adf78e45, type: 3}
+      m_Icon: {fileID: 2800000, guid: a4561e1551c8dc040922fa4954d619ce, type: 3}
       m_Width: 128
       m_Height: 128
   m_BuildTargetBatching:
