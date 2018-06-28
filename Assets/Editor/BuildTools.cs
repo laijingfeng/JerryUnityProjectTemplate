@@ -84,7 +84,7 @@ public class BuildTools : Editor
 
 #if UNITY_IOS
     [MenuItem("Tools/导出iOS", false, 0)]
-    static public void ExportWebGL()
+    static public void ExportIOS()
     {
         string dirName = "iOS" + System.DateTime.Now.ToString("yyyMMdd_HHmmss");
         string exportPath = Application.dataPath.Replace("/Assets", "") + "/" + dirName;

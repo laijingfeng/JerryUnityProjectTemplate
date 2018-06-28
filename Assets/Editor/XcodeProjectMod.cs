@@ -18,20 +18,26 @@ public class XcodeProjectMod : MonoBehaviour
             return;
         }
 
-        #region 配置
+        SetCapabilities(pathToBuiltProject);
+        AddFrameworks(pathToBuiltProject);
+        SetInfo(pathToBuiltProject);
+    }
 
-        //初始化
+    static private void AddFrameworks(string pathToBuiltProject)
+    {
+        //==初始化==
         string projectPath = pathToBuiltProject + "/Unity-iPhone.xcodeproj/project.pbxproj";
         PBXProject pbxProject = new PBXProject();
         pbxProject.ReadFromFile(projectPath);
         string targetGuid = pbxProject.TargetGuidByName("Unity-iPhone");
 
-        //添加flag
+        //==添加flag==
         //pbxProject.AddBuildProperty(targetGuid, "OTHER_LDFLAGS", "-ObjC");//for bugly
         //pbxProject.AddBuildProperty(targetGuid, "OTHER_LDFLAGS", "-lz");//for IFlyMSC
         //关闭Bitcode
         pbxProject.SetBuildProperty(targetGuid, "ENABLE_BITCODE", "NO");//for IFlyMSC,normal
 
+        //==调整路径==
         //Windows下自动导出的部分斜杠不对，重新设置一次
         //pbxProject.SetBuildProperty(targetGuid, "FRAMEWORK_SEARCH_PATHS", "$(inherited)");
         //pbxProject.AddBuildProperty(targetGuid, "FRAMEWORK_SEARCH_PATHS", "$(PROJECT_DIR)/Frameworks/Plugins/Bugly/iOS");//for bugly
@@ -44,11 +50,11 @@ public class XcodeProjectMod : MonoBehaviour
         //pbxProject.AddBuildProperty(targetGuid, "LIBRARY_SEARCH_PATHS", "$(SRCROOT)/Libraries/Plugins/Bugly/iOS");//for bugly
         //pbxProject.AddBuildProperty(targetGuid, "LIBRARY_SEARCH_PATHS", "$(SRCROOT)/Libraries/Plugins/IFlyMSC/iOS");//for IFlyMSC
 
-        //添加framwrok
-        //pbxProject.AddFrameworkToProject(targetGuid, "Security.framework", false);//for bugly,idfa
+        //==添加framwrok==
+        pbxProject.AddFrameworkToProject(targetGuid, "Security.framework", false);//for bugly,JerrySDK.idfa
         //pbxProject.AddFrameworkToProject(targetGuid, "SystemConfiguration.framework", false);//for bugly,IFlyMSC
         //pbxProject.AddFrameworkToProject(targetGuid, "JavaScriptCore.framework", true);//for bugly
-        //pbxProject.AddFrameworkToProject(targetGuid, "AdSupport.framework", false);//for idfa
+        pbxProject.AddFrameworkToProject(targetGuid, "AdSupport.framework", false);//for JerrySDK.idfa
 
         //pbxProject.AddFrameworkToProject(targetGuid, "AVFoundation.framework", false);//for IFlyMSC
         //pbxProject.AddFrameworkToProject(targetGuid, "Foundation.framework", false);//for IFlyMSC
@@ -61,31 +67,44 @@ public class XcodeProjectMod : MonoBehaviour
         //pbxProject.AddFrameworkToProject(targetGuid, "QuartzCore.framework", false);//for IFlyMSC
         //pbxProject.AddFrameworkToProject(targetGuid, "CoreGraphics.framework", false);//for IFlyMSC
 
-        //添加lib
+        //==添加lib==
         //AddLibToProject(pbxProject, targetGuid, "libc++.tbd");//for bugly
         //AddLibToProject(pbxProject, targetGuid, "libz.tbd");//for bugly,IFlyMSC
         //AddLibToProject(pbxProject, targetGuid, "libicucore.tbd");//for IFlyMSC
 
-        //应用修改
+        //==应用修改==
         File.WriteAllText(projectPath, pbxProject.WriteToString());
+    }
 
-        #endregion 配置
-
-        #region 修改Info.plist
-
-        // 修改Info.plist文件
-        var plistPath = Path.Combine(pathToBuiltProject, "Info.plist");
-        var plist = new PlistDocument();
+    static private void SetInfo(string pathToBuiltProject)
+    {
+        string plistPath = Path.Combine(pathToBuiltProject, "Info.plist");
+        PlistDocument plist = new PlistDocument();
         plist.ReadFromFile(plistPath);
+
         //plist.root.SetString("NSMicrophoneUsageDescription", "Voice Talk Need Microphone");//for IFlyMSC
         //plist.root.SetString("NSLocationUsageDescription", "Voice Talk Need Location");//for IFlyMSC
         //plist.root.SetString("NSLocationAlwaysUsageDescription", "Voice Talk Need Location");//for IFlyMSC
         //plist.root.SetString("NSContactsUsageDescription", "Voice Talk Need Contacts");//for IFlyMSC
-        plist.root.SetBoolean("ITSAppUsesNonExemptEncryption", false);
-        // 应用修改
-        plist.WriteToFile(plistPath);
+        plist.root.SetBoolean("ITSAppUsesNonExemptEncryption", false);//防止提示缺少合规证明
 
-        #endregion 修改Info.plist
+        plist.WriteToFile(plistPath);
+    }
+
+    static private void SetCapabilities(string pathToBuiltProject)
+    {
+        string projectPath = pathToBuiltProject + "/Unity-iPhone.xcodeproj/project.pbxproj";
+        PBXProject pbxProject = new PBXProject();
+        pbxProject.ReadFromString(File.ReadAllText(projectPath));
+        string targetGuid = pbxProject.TargetGuidByName("Unity-iPhone");
+
+        string str = PlayerSettings.applicationIdentifier;
+        str = str.Substring(str.LastIndexOf('.') + 1);
+        ProjectCapabilityManager capManager = new ProjectCapabilityManager(projectPath, str + ".entitlements", PBXProject.GetUnityTargetName());
+        capManager.AddPushNotifications(true);
+        //capManager.AddGameCenter();
+        //capManager.AddInAppPurchase();
+        capManager.WriteToFile();
     }
 
     /// <summary>
@@ -94,7 +113,7 @@ public class XcodeProjectMod : MonoBehaviour
     /// <param name="inst"></param>
     /// <param name="targetGuid"></param>
     /// <param name="lib"></param>
-    static void AddLibToProject(PBXProject inst, string targetGuid, string lib)
+    static private void AddLibToProject(PBXProject inst, string targetGuid, string lib)
     {
         string fileGuid = inst.AddFile("usr/lib/" + lib, "Frameworks/" + lib, PBXSourceTree.Sdk);
         inst.AddFileToBuild(targetGuid, fileGuid);
