@@ -7,7 +7,7 @@ using CSObjectWrapEditor;
 using XLua;
 #endif
 
-//Version: 2018-06-29-00
+//Version: 2018-09-21 16:07:02
 
 //Unity5.6.1里用到/../这种路径的时候，会被判定为导出到Assets目录了，所以不要出现这种写法
 public class BuildTools : Editor
@@ -88,7 +88,7 @@ public class BuildTools : Editor
     static public void ExportIOS()
     {
         HandleXlua();
-        string dirName = "iOS" + System.DateTime.Now.ToString("yyyMMdd_HHmmss");
+        string dirName = "iOS" + System.DateTime.Now.ToString("yyyMMdd_HHmmss") + "_" + PlayerSettings.GetScriptingDefineSymbolsForGroup(BuildTargetGroup.iOS);
         string exportPath = Application.dataPath.Replace("/Assets", "") + "/" + dirName;
 
         if (Directory.Exists(exportPath))
